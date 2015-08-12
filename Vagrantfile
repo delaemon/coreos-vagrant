@@ -73,7 +73,7 @@ Vagrant.configure("2") do |config|
   end
 
   (1..$num_instances).each do |i|
-    config.vm.define vm_name = "%s-%02d" % [$instance_name_prefix, i] do |config|
+    config.vm.define vm_name = "%s-etcd" % [$instance_name_prefix] do |config|
       config.vm.hostname = vm_name
 
       if $enable_serial_logging
@@ -120,13 +120,13 @@ Vagrant.configure("2") do |config|
         vb.cpus = vm_cpus
       end
 
-      ip = "172.17.8.#{i+100}"
+      ip = "172.17.8.100"
       config.vm.network :private_network, ip: ip
 
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
       #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
       $shared_folders.each_with_index do |(host_folder, guest_folder), index|
-        config.vm.synced_folder host_folder.to_s, guest_folder.to_s, id: "core-share%02d" % index, nfs: true, mount_options: ['nolock,vers=3,udp']
+        config.vm.synced_folder host_folder.to_s, guest_folder.to_s, id: "core-etcd", nfs: true, mount_options: ['nolock,vers=3,udp']
       end
 
       if $share_home
